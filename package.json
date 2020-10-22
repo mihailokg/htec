@@ -12,15 +12,21 @@
     "@react-navigation/drawer": "^5.9.3",
     "@react-navigation/native": "^5.7.6",
     "@react-navigation/stack": "^5.9.3",
+    "eslint-plugin-react-hooks": "^4.2.0",
     "expo": "~39.0.2",
     "expo-status-bar": "~1.0.2",
+    "jest-expo": "^39.0.0",
+    "lottie-ios": "^3.1.8",
+    "lottie-react-native": "~2.6.1",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-39.0.3.tar.gz",
     "react-native-gesture-handler": "~1.7.0",
+    "react-native-lottie-loader": "^1.0.0",
     "react-native-reanimated": "~1.13.0",
     "react-native-safe-area-context": "3.1.4",
     "react-native-screens": "~2.10.1",
+    "react-native-svg": "12.1.0",
     "react-native-web": "~0.13.12",
     "react-redux": "^7.2.1",
     "redux": "^4.0.5",
@@ -28,7 +34,13 @@
     "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
-    "@babel/core": "~7.9.0"
+    "@babel/core": "~7.9.0",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.11.0",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-react": "^7.21.5"
   },
   "private": true
 }

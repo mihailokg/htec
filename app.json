@@ -2,6 +2,7 @@
   "expo": {
     "name": "htec",
     "slug": "htec",
+    "description": "This is React-Native App which shows NewsApi.org top news, categories and news search.",
     "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
