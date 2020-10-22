@@ -6,28 +6,28 @@ import { formatDate } from '../../../helpers/index';
 export default class OneNews extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      hasImage: true
-    };
   }
 
-  componentDidMount() {
-    this._getImageSize(this.props.newsData.urlToImage);
+  async componentDidMount() {
+    await this._getImageSize(this.props.newsData.urlToImage);
   }
 
   _getImageSize = async (image) => {
-    await Image.getSize(image, (width, height) => {
-        this.setState({ hasImage: true });
+    let response = await Image.getSize(image, (width, height) => {
+        return true;
       },
-      () => this.setState({ hasImage: false })
+      () => {
+        return false;
+      }
     );
+    return response;
   }
 
   render()
   {
     let news = this.props.newsData;
 
-    let image = news.urlToImage && this.state.hasImage ? <View style={ styles.imageBox }>
+    let image = news.urlToImage && this._getImageSize(news.urlToImage) ? <View style={ styles.imageBox }>
         <Image style={ styles.image} source={{ uri: news.urlToImage }} />
       </View> : null;
 

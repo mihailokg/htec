@@ -10,10 +10,9 @@ import Loader from "../components/common/Loader";
 import Config from "../config/Config";
 
 const MAIN_MENU_OPTION = 'TopNews';
-const MAX_NEWS_FROM_CATEGORY = 5;
+const MAX_NEWS_FROM_CATEGORY = Config.MAX_NEWS_FROM_CATEGORY;
 
 class TopNews extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -30,8 +29,8 @@ class TopNews extends React.Component {
     };
   }
 
-  componentDidMount() {
-    this._getTopNews();
+  async componentDidMount() {
+    await this._getTopNews();
   }
 
   _getTopNews = async () => {
