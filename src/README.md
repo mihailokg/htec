@@ -22,9 +22,7 @@ If you want to run application on your Android phone fallow lines bellow
 1. Download EXPO from Google Play store https://play.google.com/store/apps/details?id=host.exp.exponent
 
 2. Open Expo App on your phone and tap "Scan QR Code"
-3. Scan this code to run HTEC Newsapi
-
-[![CC0](https://licensebuttons.net/p/zero/1.0/88x31.png)]
+3. Open project page https://expo.io/@mihailokg/projects/htec_tmp and Scan QR Code
 
 ## Contribute
 
