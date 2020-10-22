@@ -10,7 +10,7 @@ const Config = {
   apiKey: 'd789925fef3741f585fbcde6dc757e66', // '9cb9d883e8004f08a8e18daf96a0039c'
   DEVICE_WIDTH: Dimensions.get('window').width,
   DEVICE_HEIGHT: Dimensions.get('window').height,
-  USE_TEST_DATA: true, // If true we will use hardcoded response with news so we do not use daily limit,
+  USE_TEST_DATA: false, // If true we will use hardcoded response with news so we do not use daily limit,
   MAX_NEWS_FROM_CATEGORY: 5
 }
 
