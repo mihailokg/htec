@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {View, Text, TouchableOpacity, Image, ScrollView, FlatList} from 'react-native';
 import styles from './Category.styles';
-import {capitalizeFirst, formatDate} from '../../../helpers/index';
+import {capitalizeFirst, formatDate, getRandomNumber} from '../../../helpers/index';
 import OneNews from "../OneNews";
 import Config from "../../../config/Config";
 import SvgIcon from '../../../../assets/svg/SvgIcons';
@@ -12,7 +12,6 @@ export default class Category extends Component {
 
     this.state = {
       activePage: 0,
-      offset: 0,
       initialPage: 0,
       newsCountPerCategory: props.newsCountPerCategory || 5
     };
@@ -27,61 +26,51 @@ export default class Category extends Component {
   )
 
   onViewableItemsChanged = ( event ) => {
-    let xOffset = event.nativeEvent.contentOffset.x;
-    let contentCount = this.state.newsCountPerCategory - 1;
-    let dev = xOffset >= 100 ? 100 : 10;
-    let value = xOffset / (contentCount * dev);
+    const xOffset = event.nativeEvent.contentOffset.x;
+    const contentCount = this.state.newsCountPerCategory - 1;
+    const dev = xOffset >= 100 ? 100 : 10;
+    const value = xOffset / (contentCount * dev);
 
-    let cl = Math.round(value); // - 1;
+    const cl = Math.round(value); // - 1;
 
     this.setState({ activePage: cl });
   }
 
   gotoPrevious = () => {
     // console.log('this.state.activePage', this.state.activePage, this.props.initialPage);
-    if (this.state.activePage === -1)
-    {
+    if (this.state.activePage === -1) {
       this.setState({activePage: this.state.initialPage}, () => {
         this._setActivePage(this.state.activePage > 0 ? this.state.activePage - 1 : this.state.activePage);
       });
-    }
-    else
-    {
+    } else {
       this._setActivePage(this.state.activePage > 0 ? this.state.activePage - 1 : this.state.activePage);
     }
   }
 
   gotoNext = () => {
-    if (this.state.activePage === -1)
-    {
+    if (this.state.activePage === -1) {
       this.setState({activePage: this.state.initialPage}, () => {
         this._setActivePage(this.state.activePage < this.state.newsCountPerCategory ? this.state.activePage + 1: this.state.activePage)
       });
-    }
-    else
-    {
+    } else {
       this._setActivePage(this.state.activePage < this.state.newsCountPerCategory ? this.state.activePage + 1: this.state.activePage)
     }
   }
 
   _setActivePage = (page) => {
-    if (page !== 'undefined')
-    {
+    if (page !== 'undefined') {
       this.setState({
-        isLoaded: true,
         activePage: page,
-        offset: page > 0 ? 1 : 0
       }, () => {
-        this.flatListRef.scrollToIndex({animated: true, index: page});
+        this.flatListRef.scrollToIndex({ animated: true, index: page });
       });
     }
   }
 
-  render()
-  {
-    let news = this.props.newsData;
-    let category = Object.keys(news)[0];
-    let data = news[category];
+  render() {
+    const news = this.props.newsData;
+    const category = Object.keys(news)[0];
+    const data = news[category];
     // console.log('category', category);
     // console.log('data', data);
 
@@ -101,7 +90,9 @@ export default class Category extends Component {
 
         <View style={ styles.forwardButton}>
           {
+            // eslint-disable-next-line max-len
             (this.state.activePage > -1 && this.state.activePage + 1 < this.state.newsCountPerCategory) ||
+            // eslint-disable-next-line max-len
             (this.props.initialPage >= 0 && this.props.initialPage < this.state.newsCountPerCategory - 1 && this.state.activePage + 1 < this.state.newsCountPerCategory) ?
               <TouchableOpacity style={{ padding: 0, color: '#FFF'}} onPress={() => this.gotoNext()}>
                 <SvgIcon iconName="gallery_forward" svgStyle={{ width: 20, height: 42, fill: '#007AFF' }} style={ Platform.OS === 'ios' ? styles.backForwardSvgButtons : null }  />
@@ -115,22 +106,22 @@ export default class Category extends Component {
           data={data}
           // onRefresh={() => this.onRefresh()}
           refreshing={false}
-          keyExtractor={(item) => 'HORMENU21_' + (item.url)}
+          keyExtractor={(item) => `category_${item.url}`}
           // ItemSeparatorComponent={this._renderSeparator}
           onEndReached={() => {return false;}}
-          horizontal={true}
+          horizontal
           showsHorizontalScrollIndicator={false}
           renderItem={({ item }) => <OneNews
             newsData={item}
             id={item.url}
-            onPressItem={this._handlePressNews.bind(this, item)}
+            onPressItem={() => this._handlePressNews(item)}
           />}
           decelerationRate={0}
           snapToInterval={Config.DEVICE_WIDTH}
           pagingEnabled
           initialNumToRender={1}
           onEndReachedThreshold={10}
-          ref={ref => {
+          ref={(ref) => {
             this.flatListRef = ref;
           }}
           getItemLayout={this.getItemLayout}

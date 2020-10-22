@@ -10,7 +10,7 @@ import Loader from "../components/common/Loader";
 import Config from "../config/Config";
 
 const MAIN_MENU_OPTION = 'TopNews';
-const MAX_NEWS_FROM_CATEGORY = Config.MAX_NEWS_FROM_CATEGORY;
+const { MAX_NEWS_FROM_CATEGORY } = Config;
 
 class TopNews extends React.Component {
   constructor(props) {
@@ -34,14 +34,18 @@ class TopNews extends React.Component {
   }
 
   _getTopNews = async () => {
-    let topNews = await this.props.getEndPointData({country: this.state.currentCountry, searchTerm: this.state.searchTerm, category: null});
+    const topNews = await this.props.getEndPointData({
+      country: this.state.currentCountry,
+      searchTerm: this.state.searchTerm,
+      category: null,
+    });
     // alert(JSON.stringify(topNews));
-    if (topNews['response'].status === 'error')
+    if (topNews.response.status === 'error')
     {
       this.setState({
         loaded: true,
         topNews: {},
-        errorMessage: topNews['response'].message
+        errorMessage: topNews.response.message,
       });
       return false;
     }
@@ -53,25 +57,23 @@ class TopNews extends React.Component {
   }
 
   _getCategoryNews = async () => {
-    let categories = ['entertainment', 'general', 'health', 'science', 'sport', 'technology'];
-    let top5FromCategory = [];
+    const categories = ['entertainment', 'general', 'health', 'science', 'sport', 'technology'];
+    const top5FromCategory = [];
 
     await categories.map( async (category) => {
-      let response = await this.props.getEndPointData({
+      const response = await this.props.getEndPointData({
         country: this.state.currentCountry,
         searchTerm: null,
-        category: category,
-        pageSize: 5
+        category,
+        pageSize: MAX_NEWS_FROM_CATEGORY
       });
 
-      // console.log('OOOOOOOOO '  + category, response);
-
-      if (response['response'].status === 'error')
+      if (response.response.status === 'error')
       {
         this.setState({
           loaded: true,
           top5FromCategory: null,
-          errorMessage: response['response'].message
+          errorMessage: response.response.message
         });
         return false;
       }
@@ -79,18 +81,17 @@ class TopNews extends React.Component {
       // console.log('categoryNews ' + category, response['response']);
 
       let p = [];
-      let articles = response['response'].articles; // categoryNews.response.articles;
-      let tifOptions = await Object.keys(articles).map(function(key) {
-        if (key < MAX_NEWS_FROM_CATEGORY)
-        {
+      const { articles } = response.response; // categoryNews.response.articles;
+      await Object.keys(articles).map((key) => {
+        if (key < MAX_NEWS_FROM_CATEGORY) {
           // console.log('XXXX ' + key + category, articles[key]);
           p.push(articles[key]);
         }
       });
 
-      top5FromCategory.push({[category]: p});
+      top5FromCategory.push({ [category]: p });
       this.setState({
-        top5FromCategory
+        top5FromCategory,
       });
     });
 
@@ -99,31 +100,38 @@ class TopNews extends React.Component {
 
   _changeCountry = (country) => {
     this.setState({ currentCountry: country }, () => {
-      if (this.state.showCategories)
-      {
+      if (this.state.showCategories) {
         this._getCategoryNews();
-      }
-      else if (this.state.showCategory)
-      {
+      } else if (this.state.showCategory) {
         this._showOneCategory(this.state.currentCategory);
-      }
-      else
-      {
+      } else {
         this._getTopNews();
       }
     });
   }
 
   _searchTerm = (searchTerm) => {
-    this.setState({ searchTerm: searchTerm, showCategories: false, showCategory: false, currentCategory: null, topNews: {}, currentMenuOption: MAIN_MENU_OPTION }, () => {
+    this.setState({
+      searchTerm: searchTerm,
+      showCategories: false,
+      showCategory: false,
+      currentCategory: null,
+      topNews: {},
+      currentMenuOption: MAIN_MENU_OPTION
+    }, () => {
       this._getTopNews();
     });
   }
 
   _resetTopNews = () => {
-    if (this.state.searchTerm || this.state.showCategories)
-    {
-      this.setState({ searchTerm: null, showCategories: false, showCategory: false, currentCategory: null, currentMenuOption: MAIN_MENU_OPTION }, () => {
+    if (this.state.searchTerm || this.state.showCategories) {
+      this.setState({
+        searchTerm: null,
+        showCategories: false,
+        showCategory: false,
+        currentCategory: null,
+        currentMenuOption: MAIN_MENU_OPTION
+      }, () => {
         this._getTopNews();
       });
     }
@@ -165,52 +173,54 @@ class TopNews extends React.Component {
       currentCategory: category
     });
 
-    let categoryNews = await this.props.getEndPointData({country: this.state.currentCountry, searchTerm: this.state.searchTerm, category: category});
-    // alert(JSON.stringify(topNews));
-    if (categoryNews['response'].status === 'error')
+    const categoryNews = await this.props.getEndPointData({
+      country: this.state.currentCountry,
+      searchTerm: this.state.searchTerm,
+      category,
+    });
+
+    if (categoryNews.response.status === 'error')
     {
       this.setState({
         loaded: true,
         categoryNews: {},
-        errorMessage: topNews['response'].message
+        errorMessage: categoryNews.response.message
       });
       return false;
     }
 
     this.setState({
       loaded: true,
-      categoryNews
+      categoryNews,
     });
   }
 
   render() {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={ styles.container }>
         <StatusBar translucent={false} backgroundColor={'#111111'} barStyle={'dark-content'} />
         <Header
           navigation={ this.props.navigation }
           currentCountry={ this.state.currentCountry }
-          changeCountry={this._changeCountry}
-          searchTerm={this._searchTerm}
-          topNews={this._resetTopNews}
-          showCategories={this._showCategories}
-          isTopNews={true}
-          currentMenuOption={this.state.currentMenuOption}
+          changeCountry={ this._changeCountry }
+          searchTerm={ this._searchTerm }
+          topNews={ this._resetTopNews }
+          showCategories={ this._showCategories }
+          isTopNews={ true }
+          currentMenuOption={ this.state.currentMenuOption }
         />
         {
-          this.state.errorMessage ? <View style={{ flex: 1, padding: 10 }}><Text>{this.state.errorMessage}</Text></View> : (
+          this.state.errorMessage ? <View style={{ flex: 1, padding: 10 }}><Text>{ this.state.errorMessage }</Text></View> : (
             this.state.loaded ? (
               this.state.showCategories ?
                 <CategoriesComponent
-                  topNews={this.state.top5FromCategory}
+                  topNews={ this.state.top5FromCategory }
                   // refreshNews={this._getTopNews}
-                  navigation={this.props.navigation}
+                  navigation={ this.props.navigation }
                   style={{ position: 'relative'}}
                   newsCountPerCategory={MAX_NEWS_FROM_CATEGORY}
                   showOneCategory={this._showOneCategory}
-                />
-                :
-                this.state.showCategory ?
+                /> : this.state.showCategory ?
                   <TopNewsComponent
                     topNews={this.state.categoryNews}
                     refreshNews={this._getTopNews}
@@ -246,6 +256,7 @@ const styles = StyleSheet.create({
 
 function mapStateToProps (state) {
   // Log.debug('Apps mapStateToProps', {myProfile: state.myProfile, state: state});
+  // eslint-disable-next-line max-len
   // userInfo: {user_id: state.myProfile.id, gender_string: state.myProfile.gender, email: state.myProfile.email, username: state.myProfile.username }
 
   return {
@@ -255,7 +266,7 @@ function mapStateToProps (state) {
 
 function mapDispatchToProps (dispatch) {
   return bindActionCreators({
-    getEndPointData
+    getEndPointData,
   }, dispatch);
 }
 

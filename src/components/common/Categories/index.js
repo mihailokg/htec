@@ -1,15 +1,11 @@
 import React, { Component } from 'react';
 import { FlatList, View } from 'react-native';
-
-import Category from '../../common/Category';
+import Category from '../Category';
 import { getRandomNumber } from '../../../helpers';
 
 export default class CategoriesComponent extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      isFetching: false
-    }
   }
 
   _renderSeparator = () => {
@@ -25,26 +21,26 @@ export default class CategoriesComponent extends Component {
     );
   };
 
-  render()
-  {
-    let data0 = typeof this.props.topNews !== 'undefined' && this.props.topNews !== null ? this.props.topNews : [];
-
+  render() {
+    const data0 = typeof this.props.topNews !== 'undefined' && this.props.topNews !== null ? this.props.topNews : [];
     return (
       <FlatList
         data={data0}
         // onRefresh={() => this.onRefresh()}
         refreshing={false}
-        keyExtractor={(item) => 'news_' + getRandomNumber()}
+        keyExtractor={() => `news_${getRandomNumber()}`}
         initialNumToRender={5}
         ItemSeparatorComponent={this._renderSeparator}
-        onEndReached={() => {return false;}}
+        onEndReached={() => false}
         horizontal={false}
         showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => <Category
-          newsData={item}
-          navigation={this.props.navigation}
-          showOneCategory={this.props.showOneCategory}
-        />}
+        renderItem={({ item }) => (
+          <Category
+            newsData={item}
+            navigation={this.props.navigation}
+            showOneCategory={this.props.showOneCategory}
+          />
+        )}
       />
     );
   }

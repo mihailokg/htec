@@ -9,8 +9,8 @@ export default class Header extends React.Component {
     super(props);
     this.state = {
       searchLocation: new Animated.Value(0),
-      searchTerm: ''
-    }
+      searchTerm: '',
+    };
   }
 
   _searchPressed = () => {
@@ -36,24 +36,24 @@ export default class Header extends React.Component {
     this.setState({ searchTerm: text });
   }
 
-  render(){
-    return(
+  render() {
+    return (
       <View style={ styles.bigContainer }>
-        <Animated.View style={ [styles.container, { opacity: 0.9 }] }>
+        <Animated.View style={[styles.container, { opacity: 0.9 }]}>
           <MainButton
             text="Top News"
             onPress={() => { this.props.isTopNews ? this.props.topNews() : this.props.navigation.navigate('TopNews') }}
-            buttonStyle={ [styles.textButton, { width: 80, color: this.props.currentMenuOption === 'TopNews' ? '#007AFF' : '#111' }] }
+            buttonStyle={[styles.textButton, { width: 80, color: this.props.currentMenuOption === 'TopNews' ? '#007AFF' : '#111' }]}
           />
           <MainButton
             text="Categories"
             onPress={() => this.props.showCategories()}
-            buttonStyle={ [styles.textButton, { width: 80, color: this.props.currentMenuOption === 'Categories' ? '#007AFF' : '#111' }] }
+            buttonStyle={[styles.textButton, { width: 80, color: this.props.currentMenuOption === 'Categories' ? '#007AFF' : '#111' }]}
           />
           <MainButton
             text="Search"
             onPress={() => this._searchPressed()}
-            buttonStyle={ [styles.textButton, { width: 70 }] }
+            buttonStyle={[styles.textButton, { width: 70 }]}
           />
         </Animated.View>
 
@@ -70,6 +70,7 @@ export default class Header extends React.Component {
           />
         </View>
 
+        {/* eslint-disable-next-line max-len */}
         <Animated.View style={ [styles.searchBox, { transform: [{translateX: this.state.searchLocation}] }] }>
           <TextInput
             ref={(e) => {this.textInput = e}}
@@ -84,8 +85,8 @@ export default class Header extends React.Component {
           <View style={ styles.countryBox }>
             <MainButton
               text="Search"
-              onPress={() => { this.props.searchTerm(this.state.searchTerm); this._resetSearch() }}
-              buttonStyle={ [styles.countryButtonActive, { width: 80 }] }
+              onPress={() => { this.props.searchTerm(this.state.searchTerm); this._resetSearch(); }}
+              buttonStyle={[styles.countryButtonActive, { width: 80 }]}
             />
             <MainButton
               text="Close"
