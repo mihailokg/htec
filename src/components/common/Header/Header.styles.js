@@ -25,6 +25,7 @@ export default StyleSheet.create({
     padding: 5,
     alignItems: 'center',
     justifyContent: 'flex-start',
+    zIndex: 99999
   },
   countryBox: {
     flexDirection: 'row',
@@ -42,5 +43,19 @@ export default StyleSheet.create({
   countryButtonActive: {
     color: '#FFF',
     backgroundColor: '#007AFF'
+  },
+  textButton: {
+    color: '#111',
+    backgroundColor: 'transparent',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  searchInput: {
+    borderWidth: 1,
+    borderColor: '#007AFF',
+    borderRadius: 5,
+    width: Config.DEVICE_WIDTH - 190,
+    padding: 10,
+    height: 37,
   }
 });

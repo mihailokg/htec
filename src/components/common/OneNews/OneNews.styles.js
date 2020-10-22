@@ -3,9 +3,7 @@ import Config from "../../../config/Config";
 
 export default StyleSheet.create({
   container: {
-    width: Config.DEVICE_WIDTH,
-    padding: 10,
-    marginBottom: 10
+    width: Config.DEVICE_WIDTH
   },
   newsBox: {
     width: '100%',
@@ -15,9 +13,11 @@ export default StyleSheet.create({
     width: 100,
   },
   contentBox: {
-    width: Config.DEVICE_WIDTH - 130,
+    width: Config.DEVICE_WIDTH - 120,
     flexDirection: 'column',
-    paddingLeft: 10
+    paddingLeft: 10,
+    height: 100,
+    alignSelf: 'stretch'
   },
   image: {
     width: 100,
@@ -36,5 +36,7 @@ export default StyleSheet.create({
   description: {
     fontSize: 12,
     fontWeight: '300',
+    flexWrap: 'wrap',
+    flexShrink: 1
   }
 });

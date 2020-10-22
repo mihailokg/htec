@@ -3,6 +3,7 @@ import { ScrollView, View, Text, Image } from 'react-native';
 import Config from '../../../config/Config';
 import styles from './Details.styles';
 import { formatDate } from '../../../helpers/index';
+import Loader from "../../../components/common/Loader";
 
 export default class DetailsScreen extends Component {
   constructor(props) {
@@ -10,6 +11,7 @@ export default class DetailsScreen extends Component {
     this.state = {
       width: Config.DEVICE_WIDTH - 20,
       height: Config.DEVICE_WIDTH - 20,
+      hasPhoto: true,
       news: null,
       loaded: false
     }
@@ -27,8 +29,10 @@ export default class DetailsScreen extends Component {
         let w = ( width >= Config.DEVICE_WIDTH - 20 ) ? Config.DEVICE_WIDTH - 20 : width;
         let h = height * ( w / height );
         // alert(Config.DEVICE_WIDTH + ' / ' + w + ' / ' + h);
-        this.setState({ width: w, height: h })
-      });
+        this.setState({ width: w, height: h, hasPhoto: true });
+      },
+      () => this.setState({ width: 0, height: 0, hasPhoto: false })
+      );
     }
   }
 
@@ -36,14 +40,14 @@ export default class DetailsScreen extends Component {
   {
     if (!this.state.loaded)
     {
-      return (<View><Text>Loading...</Text></View>);
+      return (<Loader visible={true} />);
     }
     let news = this.state.news;
     return (
       <ScrollView contentContainerStyle={{ alignItems: 'flex-start', justifyContent: 'flex-start' }} style={ styles.container } >
         <Text allowFontScaling={false} style={ styles.title }>{news.title}</Text>
         <Text allowFontScaling={false} style={ styles.publishedDate }>{formatDate(news.publishedAt)}</Text>
-        { news.urlToImage ? <Image style={{ width: this.state.width, height: this.state.height }} source={{ uri: news.urlToImage }} /> : null }
+        { this.state.hasPhoto && news.urlToImage ? <Image style={{ width: this.state.width, height: this.state.height }} source={{ uri: news.urlToImage }} /> : null }
         <Text style={ styles.content } allowFontScaling={false}>{ news.content || news.description }</Text>
         { /* <Text allowFontScaling={false}>{JSON.stringify(this.props)}</Text> */ }
       </ScrollView>

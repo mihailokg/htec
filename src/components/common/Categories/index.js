@@ -2,13 +2,11 @@ import React, { Component } from 'react';
 import { FlatList, View } from 'react-native';
 
 import Category from '../../common/Category';
-import { capitalizeFirst, getRandomNumber } from '../../../helpers';
+import { getRandomNumber } from '../../../helpers';
 
 export default class CategoriesComponent extends Component {
   constructor(props) {
     super(props);
-    // alert(JSON.stringify(this.props.topNews.response.articles));
-    console.log('Props', props.navigation);
     this.state = {
       isFetching: false
     }
@@ -45,6 +43,7 @@ export default class CategoriesComponent extends Component {
         renderItem={({ item }) => <Category
           newsData={item}
           navigation={this.props.navigation}
+          showOneCategory={this.props.showOneCategory}
         />}
       />
     );

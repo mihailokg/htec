@@ -6,6 +6,8 @@ import {connect} from "react-redux";
 import { getEndPointData } from '../actions/getEndPointData';
 import TopNewsComponent from '../components/TopNews';
 import CategoriesComponent from '../components/common/Categories';
+import Loader from "../components/common/Loader";
+import Config from "../config/Config";
 
 const MAIN_MENU_OPTION = 'TopNews';
 const MAX_NEWS_FROM_CATEGORY = 5;
@@ -22,7 +24,9 @@ class TopNews extends React.Component {
       showCategories: false,
       currentMenuOption: MAIN_MENU_OPTION,
       top5FromCategory: null,
-      errorMessage: null
+      errorMessage: null,
+      categoryNews: null,
+      currentCategory: null
     };
   }
 
@@ -53,10 +57,10 @@ class TopNews extends React.Component {
     let categories = ['entertainment', 'general', 'health', 'science', 'sport', 'technology'];
     let top5FromCategory = [];
 
-    categories.map( async (category) => {
+    await categories.map( async (category) => {
       let response = await this.props.getEndPointData({
         country: this.state.currentCountry,
-        searchTerm: this.state.searchTerm,
+        searchTerm: null,
         category: category,
         pageSize: 5
       });
@@ -86,10 +90,12 @@ class TopNews extends React.Component {
       });
 
       top5FromCategory.push({[category]: p});
-
+      this.setState({
+        top5FromCategory
+      });
     });
 
-    return top5FromCategory;
+    return true;
   }
 
   _changeCountry = (country) => {
@@ -97,6 +103,10 @@ class TopNews extends React.Component {
       if (this.state.showCategories)
       {
         this._getCategoryNews();
+      }
+      else if (this.state.showCategory)
+      {
+        this._showOneCategory(this.state.currentCategory);
       }
       else
       {
@@ -106,7 +116,7 @@ class TopNews extends React.Component {
   }
 
   _searchTerm = (searchTerm) => {
-    this.setState({ searchTerm: searchTerm, showCategories: false, topNews: {}, currentMenuOption: MAIN_MENU_OPTION }, () => {
+    this.setState({ searchTerm: searchTerm, showCategories: false, showCategory: false, currentCategory: null, topNews: {}, currentMenuOption: MAIN_MENU_OPTION }, () => {
       this._getTopNews();
     });
   }
@@ -114,44 +124,70 @@ class TopNews extends React.Component {
   _resetTopNews = () => {
     if (this.state.searchTerm || this.state.showCategories)
     {
-      this.setState({ searchTerm: null, showCategories: false, currentMenuOption: MAIN_MENU_OPTION }, () => {
+      this.setState({ searchTerm: null, showCategories: false, showCategory: false, currentCategory: null, currentMenuOption: MAIN_MENU_OPTION }, () => {
         this._getTopNews();
       });
     }
   }
 
-  _showCategories = () => {
+  /**
+   * Show categories screen
+   *
+   * @private
+   */
+  _showCategories = async () => {
     this.setState({
       showCategories: true,
-      currentMenuOption: 'Categories'
+      currentMenuOption: 'Categories',
+      showCategory: false,
+      currentCategory: null,
+      searchTerm: null
     });
-    this._getCategoryNews().then((reponse) => {
-      // console.log('top5FromCategory', JSON.stringify(this.state.top5FromCategory));
-      // console.log('XXXX ', reponse);
+    await this._getCategoryNews();
+    this.setState({
+      loaded: true,
+      top5FromCategory: this.state.top5FromCategory
+    });
+  }
+
+  /**
+   * Show one category all news
+   *
+   * @param category string
+   * @returns {Promise<boolean>}
+   * @private
+   */
+  _showOneCategory = async (category) => {
+    this.setState({
+      showCategories: false,
+      showCategory: true,
+      currentMenuOption: 'Categories',
+      loaded: false,
+      currentCategory: category
+    });
+
+    let categoryNews = await this.props.getEndPointData({country: this.state.currentCountry, searchTerm: this.state.searchTerm, category: category});
+    // alert(JSON.stringify(topNews));
+    if (categoryNews['response'].status === 'error')
+    {
       this.setState({
         loaded: true,
-        top5FromCategory: reponse
+        categoryNews: {},
+        errorMessage: topNews['response'].message
       });
+      return false;
+    }
+
+    this.setState({
+      loaded: true,
+      categoryNews
     });
   }
 
   render() {
-    if (!this.state.loaded)
-    {
-      return (
-        <View><Text>Loading...</Text></View>
-      );
-    }
-
-    if (this.state.errorMessage)
-    {
-      return (
-        <View><Text>{this.state.errorMessage}</Text></View>
-      );
-    }
     return (
       <SafeAreaView style={styles.container}>
-        <StatusBar translucent={true} backgroundColor={'#111111'} barStyle={'dark-content'} />
+        <StatusBar translucent={false} backgroundColor={'#111111'} barStyle={'dark-content'} />
         <Header
           navigation={ this.props.navigation }
           currentCountry={ this.state.currentCountry }
@@ -163,21 +199,35 @@ class TopNews extends React.Component {
           currentMenuOption={this.state.currentMenuOption}
         />
         {
-          this.state.showCategories ?
-            <CategoriesComponent
-              topNews={this.state.top5FromCategory}
-              // refreshNews={this._getTopNews}
-              navigation={this.props.navigation}
-              style={{ position: 'relative'}}
-              newsCountPerCategory={MAX_NEWS_FROM_CATEGORY}
-            />
-              :
-            <TopNewsComponent
-              topNews={this.state.topNews}
-              refreshNews={this._getTopNews}
-              navigation={this.props.navigation}
-              style={{ position: 'relative'}}
-            />
+          this.state.errorMessage ? <View style={{ flex: 1, padding: 10 }}><Text>{this.state.errorMessage}</Text></View> : (
+            this.state.loaded ? (
+              this.state.showCategories ?
+                <CategoriesComponent
+                  topNews={this.state.top5FromCategory}
+                  // refreshNews={this._getTopNews}
+                  navigation={this.props.navigation}
+                  style={{ position: 'relative'}}
+                  newsCountPerCategory={MAX_NEWS_FROM_CATEGORY}
+                  showOneCategory={this._showOneCategory}
+                />
+                :
+                this.state.showCategory ?
+                  <TopNewsComponent
+                    topNews={this.state.categoryNews}
+                    refreshNews={this._getTopNews}
+                    navigation={this.props.navigation}
+                    style={{ position: 'relative'}}
+                    categoryName={this.state.currentCategory}
+                  />
+                  :
+                  <TopNewsComponent
+                    topNews={this.state.topNews}
+                    refreshNews={this._getTopNews}
+                    navigation={this.props.navigation}
+                    style={{ position: 'relative'}}
+                  />
+            ) : <Loader visible={true} />
+          )
         }
       </SafeAreaView>
     );

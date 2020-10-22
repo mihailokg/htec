@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, TouchableHighlight } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 class MainButton extends Component {
   constructor(props) {
@@ -15,9 +15,9 @@ class MainButton extends Component {
       {this.props.text}
     </Text>;
     return (
-      <TouchableHighlight
+      <TouchableOpacity
         activeOpacity={0.8}
-        // underlayColor={this.props.underlayColor}
+        // underlayColor={'#adadad'}
         style={[
           {backgroundColor: this.props.disabled ? '#fff' : '#000'},
           styles.buttonStyle,
@@ -26,7 +26,7 @@ class MainButton extends Component {
         hitSlop={this.props.hitSlop}
         disabled={this.props.disabled}>
         {element}
-      </TouchableHighlight>
+      </TouchableOpacity>
     );
   }
 }

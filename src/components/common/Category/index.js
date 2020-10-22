@@ -4,6 +4,7 @@ import styles from './Category.styles';
 import {capitalizeFirst, formatDate} from '../../../helpers/index';
 import OneNews from "../OneNews";
 import Config from "../../../config/Config";
+import SvgIcon from '../../../../assets/svg/SvgIcons';
 
 export default class Category extends Component {
   constructor(props) {
@@ -27,7 +28,7 @@ export default class Category extends Component {
 
   onViewableItemsChanged = ( event ) => {
     let xOffset = event.nativeEvent.contentOffset.x;
-    let contentCount = NEWS_COUNT_PER_CATEGORY;
+    let contentCount = this.state.newsCountPerCategory - 1;
     let dev = xOffset >= 100 ? 100 : 10;
     let value = xOffset / (contentCount * dev);
 
@@ -86,31 +87,29 @@ export default class Category extends Component {
 
     return (
       <View style={ styles.container }>
-        <Text style={ styles.title } onPress={() => alert(category) }>{capitalizeFirst(category)}</Text>
+        <Text style={ styles.title } onPress={() => this.props.showOneCategory(category) }>{capitalizeFirst(category)}</Text>
 
-        <View style={{ zIndex: 998, position: 'absolute', top: 0, width: '20%', height: 100, alignItems: 'flex-start', justifyContent: 'center'}}>
+        <View style={ styles.backButton }>
           {
             this.state.activePage - 1 >= 0 || (this.state.activePage === -1 && this.props.initialPage > 0)?
-              <TouchableOpacity style={{ padding: 10, color: '#FFF'}} onPress={() => this.gotoPrevious()}>
-                {/*<SvgIcon iconName="gallery_back" svgStyle={{ width: Measurements.navIconWidth, height: 42, fill: Colors.white }}  style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 2, }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5 }} />*/}
-                <Text> {'<'} </Text>
+              <TouchableOpacity style={{ padding: 0, color: '#FFF'}} onPress={() => this.gotoPrevious()}>
+                <SvgIcon iconName="gallery_back" svgStyle={{ width: 20, height: 42, fill: '#007AFF' }} style={ Platform.OS === 'ios' ? styles.backForwardSvgButtons : null } />
               </TouchableOpacity>
               : null
           }
         </View>
 
-        <View style={{ zIndex: 1000, position: 'absolute', top: 0, width: '20%', height: 100, alignItems: 'flex-end', justifyContent: 'center', paddingLeft: 10, left: '80%'}}>
+        <View style={ styles.forwardButton}>
           {
             (this.state.activePage > -1 && this.state.activePage + 1 < this.state.newsCountPerCategory) ||
             (this.props.initialPage >= 0 && this.props.initialPage < this.state.newsCountPerCategory - 1 && this.state.activePage + 1 < this.state.newsCountPerCategory) ?
-              <TouchableOpacity style={{ padding: 10, color: '#FFF'}} onPress={() => this.gotoNext()}>
-                {/*<SvgIcon iconName="gallery_forward" svgStyle={{ width: Measurements.navIconWidth, height: 42, fill: Colors.white }}  style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 2, }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5 }} />*/}
-                <Text> {'>'} </Text>
+              <TouchableOpacity style={{ padding: 0, color: '#FFF'}} onPress={() => this.gotoNext()}>
+                <SvgIcon iconName="gallery_forward" svgStyle={{ width: 20, height: 42, fill: '#007AFF' }} style={ Platform.OS === 'ios' ? styles.backForwardSvgButtons : null }  />
               </TouchableOpacity>
               : null
           }
-
         </View>
+
 
         <FlatList
           data={data}

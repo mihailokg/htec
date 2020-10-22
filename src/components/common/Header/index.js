@@ -23,6 +23,9 @@ export default class Header extends React.Component {
   }
 
   _resetSearch = () => {
+    this.textInput.setNativeProps({ text: '', placeholder: 'eg. Trump' });
+
+    // this.textInput.current.clear();
     this.setState({
       searchLocation: new Animated.Value(0)
     });
@@ -36,23 +39,23 @@ export default class Header extends React.Component {
   render(){
     return(
       <View style={ styles.bigContainer }>
-        <View style={ styles.container }>
-          <Button
-            title="Top News"
+        <Animated.View style={ [styles.container, { opacity: 0.9 }] }>
+          <MainButton
+            text="Top News"
             onPress={() => { this.props.isTopNews ? this.props.topNews() : this.props.navigation.navigate('TopNews') }}
-            color={ this.props.currentMenuOption === 'TopNews' ? 'green' : 'black'}
+            buttonStyle={ [styles.textButton, { width: 80, color: this.props.currentMenuOption === 'TopNews' ? '#007AFF' : '#111' }] }
           />
-          <Button
-            title="Categories"
-            onPress={() => this.props.showCategories()} // navigation.navigate('Categories')}
-            color={ this.props.currentMenuOption === 'Categories' ? 'green' : 'black'}
+          <MainButton
+            text="Categories"
+            onPress={() => this.props.showCategories()}
+            buttonStyle={ [styles.textButton, { width: 80, color: this.props.currentMenuOption === 'Categories' ? '#007AFF' : '#111' }] }
           />
-          <Button
-            title="Search"
-            // onPress={() => this.props.searchTerm('trump')}
-            onPress={this._searchPressed}
+          <MainButton
+            text="Search"
+            onPress={() => this._searchPressed()}
+            buttonStyle={ [styles.textButton, { width: 70 }] }
           />
-        </View>
+        </Animated.View>
 
         <View style={ styles.countryBox }>
           <MainButton
@@ -74,10 +77,9 @@ export default class Header extends React.Component {
             underlineColorAndroid="transparent"
             placeholder={'eg. Trump'}
             placeholderTextColor="grey"
-            style={{ flex: 1, fontWeight: '400', fontSize: 13 }}
             withRef
             onChangeText={(text) => this._changeSearchTerm(text)}
-            style={{ borderWidth: 1, borderColor: '#007AFF', borderRadius: 5, width: Config.DEVICE_WIDTH - 190, padding: 10, height: 37 }}
+            style={ styles.searchInput }
           />
           <View style={ styles.countryBox }>
             <MainButton
