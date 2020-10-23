@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
+import {
+  FlatList,
+  Text,
+  View,
+} from 'react-native';
 import OneNews from './common/OneNews';
-import {FlatList, Text, View} from 'react-native';
-import styles from "./common/Category/Category.styles";
-import {capitalizeFirst} from "../helpers";
+import styles from './common/Category/Category.styles';
+import { capitalizeFirst } from '../helpers';
 
 export default class TopNewsComponent extends Component {
   constructor(props) {
@@ -10,8 +14,8 @@ export default class TopNewsComponent extends Component {
     // alert(JSON.stringify(this.props.topNews.response.articles));
     // console.log('Props', props.navigation);
     this.state = {
-      isFetching: false
-    }
+      isFetching: false,
+    };
   }
 
   _renderSeparator = () => {
@@ -22,16 +26,19 @@ export default class TopNewsComponent extends Component {
           width: '100%',
           backgroundColor: '#CED0CE',
           marginBottom: 10,
-          marginTop: 10
+          marginTop: 10,
         }}
       />
     );
   };
 
   onRefresh() {
-    this.setState({isFetching: true,},() => { this.props.refreshNews().then( () => {
+    this.setState({ isFetching: true }, () =>
+    {
+      this.props.refreshNews().then(() =>
+      {
         this.setState({ isFetching: false });
-      })
+      });
     });
   }
 

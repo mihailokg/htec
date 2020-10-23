@@ -4,7 +4,6 @@ import {
 } from 'react-native';
 import styles from './OneNews.styles';
 import { formatDate } from '../../../helpers/index';
-import Loader from '../Loader';
 
 export default class OneNews extends Component {
   constructor(props) {
@@ -19,7 +18,7 @@ export default class OneNews extends Component {
     setTimeout(() => {}, 5000);
     Image.getSize(this.props.newsData.urlToImage, (width, height) => {
       this.setState({
-        hasImage: width ? true : false,
+        hasImage: !!width,
         loaded: true,
       });
     }, () => this.setState({ hasImage: false, loaded: true, }));
@@ -55,7 +54,7 @@ export default class OneNews extends Component {
                 allowFontScaling={false}
                 numberOfLines={3}
               >
-                { news.description }
+                {news.description}
               </Text>
               { /* <Text>{JSON.stringify(news)}</Text> */ }
             </View>
