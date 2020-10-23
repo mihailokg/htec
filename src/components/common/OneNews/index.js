@@ -1,3 +1,8 @@
+/* eslint-disable max-len */
+/* eslint-disable react/destructuring-assignment */
+/* eslint-disable react/prop-types */
+/* eslint-disable no-nested-ternary */
+/* eslint-disable react/jsx-filename-extension */
 import React, { Component } from 'react';
 import {
   View, Text, TouchableOpacity, Image,
@@ -16,12 +21,12 @@ export default class OneNews extends Component {
 
   componentDidMount() {
     setTimeout(() => {}, 5000);
-    Image.getSize(this.props.newsData.urlToImage, (width, height) => {
+    Image.getSize(this.props.newsData.urlToImage, (width) => {
       this.setState({
         hasImage: !!width,
         loaded: true,
       });
-    }, () => this.setState({ hasImage: false, loaded: true, }));
+    }, () => this.setState({ hasImage: false, loaded: true }));
   }
 
   render() {

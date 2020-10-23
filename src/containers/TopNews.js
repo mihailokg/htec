@@ -1,13 +1,18 @@
-import * as React from "react";
-import {SafeAreaView, StyleSheet, Text, View, StatusBar} from "react-native";
-import Header from "../components/common/Header";
-import {bindActionCreators} from "redux";
-import {connect} from "react-redux";
+/* eslint-disable no-nested-ternary */
+/* eslint-disable react/destructuring-assignment */
+/* eslint-disable react/jsx-filename-extension */
+import * as React from 'react';
+import {
+  SafeAreaView, StyleSheet, Text, View, StatusBar,
+} from 'react-native';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import Header from '../components/common/Header';
 import { getEndPointData } from '../actions/getEndPointData';
 import TopNewsComponent from '../components/TopNews';
 import CategoriesComponent from '../components/common/Categories';
-import Loader from "../components/common/Loader";
-import Config from "../config/Config";
+import Loader from '../components/common/Loader';
+import Config from '../config/Config';
 
 const MAIN_MENU_OPTION = 'TopNews';
 const { MAX_NEWS_FROM_CATEGORY } = Config;
@@ -25,23 +30,24 @@ class TopNews extends React.Component {
       top5FromCategory: null,
       errorMessage: null,
       categoryNews: null,
-      currentCategory: null
+      currentCategory: null,
     };
   }
 
   async componentDidMount() {
-    await this._getTopNews();
+    await this.getTopNews();
   }
 
-  _getTopNews = async () => {
+  /**
+   * Get Top News from API
+   */
+  getTopNews = async () => {
     const topNews = await this.props.getEndPointData({
       country: this.state.currentCountry,
       searchTerm: this.state.searchTerm,
       category: null,
     });
-    // alert(JSON.stringify(topNews));
-    if (topNews.response.status === 'error')
-    {
+    if (topNews.response.status === 'error') {
       this.setState({
         loaded: true,
         topNews: {},
@@ -52,28 +58,27 @@ class TopNews extends React.Component {
 
     this.setState({
       loaded: true,
-      topNews
+      topNews,
     });
   }
 
-  _getCategoryNews = async () => {
+  getCategoryNews = async () => {
     const categories = ['entertainment', 'general', 'health', 'science', 'sport', 'technology'];
     const top5FromCategory = [];
 
-    await categories.map( async (category) => {
+    await categories.map(async (category) => {
       const response = await this.props.getEndPointData({
         country: this.state.currentCountry,
         searchTerm: null,
         category,
-        pageSize: MAX_NEWS_FROM_CATEGORY
+        pageSize: MAX_NEWS_FROM_CATEGORY,
       });
 
-      if (response.response.status === 'error')
-      {
+      if (response.response.status === 'error') {
         this.setState({
           loaded: true,
           top5FromCategory: null,
-          errorMessage: response.response.message
+          errorMessage: response.response.message,
         });
         return false;
       }
@@ -102,25 +107,25 @@ class TopNews extends React.Component {
   _changeCountry = (country) => {
     this.setState({ currentCountry: country }, () => {
       if (this.state.showCategories) {
-        this._getCategoryNews();
+        this.getCategoryNews();
       } else if (this.state.showCategory) {
-        this._showOneCategory(this.state.currentCategory);
+        this.showOneCategory(this.state.currentCategory);
       } else {
-        this._getTopNews();
+        this.getTopNews();
       }
     });
   }
 
   _searchTerm = (searchTerm) => {
     this.setState({
-      searchTerm: searchTerm,
+      searchTerm,
       showCategories: false,
       showCategory: false,
       currentCategory: null,
       topNews: {},
-      currentMenuOption: MAIN_MENU_OPTION
+      currentMenuOption: MAIN_MENU_OPTION,
     }, () => {
-      this._getTopNews();
+      this.getTopNews();
     });
   }
 
@@ -131,9 +136,9 @@ class TopNews extends React.Component {
         showCategories: false,
         showCategory: false,
         currentCategory: null,
-        currentMenuOption: MAIN_MENU_OPTION
+        currentMenuOption: MAIN_MENU_OPTION,
       }, () => {
-        this._getTopNews();
+        this.getTopNews();
       });
     }
   }
@@ -143,18 +148,18 @@ class TopNews extends React.Component {
    *
    * @private
    */
-  _showCategories = async () => {
+  showCategories = async () => {
     this.setState({
       showCategories: true,
       currentMenuOption: 'Categories',
       showCategory: false,
       currentCategory: null,
-      searchTerm: null
+      searchTerm: null,
     });
-    await this._getCategoryNews();
+    await this.getCategoryNews();
     this.setState({
       loaded: true,
-      top5FromCategory: this.state.top5FromCategory
+      top5FromCategory: this.state.top5FromCategory,
     });
   }
 
@@ -165,13 +170,13 @@ class TopNews extends React.Component {
    * @returns {Promise<boolean>}
    * @private
    */
-  _showOneCategory = async (category) => {
+  showOneCategory = async (category) => {
     this.setState({
       showCategories: false,
       showCategory: true,
       currentMenuOption: 'Categories',
       loaded: false,
-      currentCategory: category
+      currentCategory: category,
     });
 
     const categoryNews = await this.props.getEndPointData({
@@ -180,8 +185,7 @@ class TopNews extends React.Component {
       category,
     });
 
-    if (categoryNews.response.status === 'error')
-    {
+    if (categoryNews.response.status === 'error') {
       this.setState({
         loaded: true,
         categoryNews: {},
@@ -198,51 +202,52 @@ class TopNews extends React.Component {
 
   render() {
     return (
-      <SafeAreaView style={ styles.container }>
-        <StatusBar translucent={false} backgroundColor={'#111111'} barStyle={'dark-content'} />
+      <SafeAreaView style={styles.container}>
+        <StatusBar translucent={false} backgroundColor="#111111" barStyle="dark-content" />
         <Header
           navigation={this.props.navigation}
           currentCountry={this.state.currentCountry}
           changeCountry={this._changeCountry}
           searchTerm={this._searchTerm}
           topNews={this._resetTopNews}
-          showCategories={this._showCategories}
+          showCategories={this.showCategories}
           isTopNews
           currentMenuOption={this.state.currentMenuOption}
         />
         {
           this.state.errorMessage ? (
             <View style={{ flex: 1, padding: 10 }}>
-              <Text>{this.state.errorMessage}</Text>
+              <Text>{ this.state.errorMessage }</Text>
             </View>
           ) : (
             this.state.loaded ? (
-              this.state.showCategories ?
+              this.state.showCategories ? (
                 <CategoriesComponent
                   topNews={this.state.top5FromCategory}
-                  // refreshNews={this._getTopNews}
+                  // refreshNews={this.getTopNews}
                   navigation={this.props.navigation}
                   style={{ position: 'relative' }}
                   newsCountPerCategory={MAX_NEWS_FROM_CATEGORY}
-                  showOneCategory={this._showOneCategory}
-                /> : this.state.showCategory
-                  ? (
-                    <TopNewsComponent
-                      topNews={this.state.categoryNews}
-                      refreshNews={this._getTopNews}
-                      navigation={this.props.navigation}
-                      style={{ position: 'relative'}}
-                      categoryName={this.state.currentCategory}
-                    />
-                  )
-                  : (
-                    <TopNewsComponent
-                      topNews={this.state.topNews}
-                      refreshNews={this._getTopNews}
-                      navigation={this.props.navigation}
-                      style={{ position: 'relative'}}
-                    />
-                  )
+                  showOneCategory={this.showOneCategory}
+                />
+              ) : this.state.showCategory
+                ? (
+                  <TopNewsComponent
+                    topNews={this.state.categoryNews}
+                    refreshNews={this.getTopNews}
+                    navigation={this.props.navigation}
+                    style={{ position: 'relative' }}
+                    categoryName={this.state.currentCategory}
+                  />
+                )
+                : (
+                  <TopNewsComponent
+                    topNews={this.state.topNews}
+                    refreshNews={this.getTopNews}
+                    navigation={this.props.navigation}
+                    style={{ position: 'relative' }}
+                  />
+                )
             ) : <Loader visible />
           )
         }
@@ -260,7 +265,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function mapStateToProps(state) {
+function mapStateToProps() {
   return {};
 }
 

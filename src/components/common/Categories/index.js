@@ -1,25 +1,20 @@
+/* eslint-disable react/jsx-filename-extension */
 import React, { Component } from 'react';
 import { FlatList, View } from 'react-native';
 import Category from '../Category';
 import { getRandomNumber } from '../../../helpers';
 
 export default class CategoriesComponent extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  _renderSeparator = () => {
-    return (
-      <View
-        style={{
-          height: 1,
-          width: '100%',
-          backgroundColor: '#CED0CE',
-          marginBottom: 10
-        }}
-      />
-    );
-  };
+  renderSeparator = () => (
+    <View
+      style={{
+        height: 1,
+        width: '100%',
+        backgroundColor: '#CED0CE',
+        marginBottom: 10,
+      }}
+    />
+  );
 
   render() {
     const data0 = typeof this.props.topNews !== 'undefined' && this.props.topNews !== null ? this.props.topNews : [];
@@ -30,7 +25,7 @@ export default class CategoriesComponent extends Component {
         refreshing={false}
         keyExtractor={() => `news_${getRandomNumber()}`}
         initialNumToRender={5}
-        ItemSeparatorComponent={this._renderSeparator}
+        ItemSeparatorComponent={this.renderSeparator}
         onEndReached={() => false}
         horizontal={false}
         showsVerticalScrollIndicator={false}

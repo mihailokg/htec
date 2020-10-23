@@ -1,6 +1,9 @@
+/* eslint-disable react/jsx-filename-extension */
+/* eslint-disable react/prop-types */
+/* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
 import {
-  ScrollView, View, Text, Image,
+  ScrollView, Text, Image,
 } from 'react-native';
 import Config from '../../../config/Config';
 import styles from './Details.styles';
@@ -38,7 +41,9 @@ export default class DetailsScreen extends Component {
 
   render() {
     if (!this.state.loaded) {
-      return (<Loader visible />);
+      return (
+        <Loader visible />
+      );
     }
     const { news } = this.state;
     const content = news.content || news.description;

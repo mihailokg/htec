@@ -1,5 +1,11 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-expressions */
+/* eslint-disable react/jsx-filename-extension */
+/* eslint-disable react/destructuring-assignment */
 import React from 'react';
-import { View, TextInput, Text, Keyboard, Button, Animated } from 'react-native';
+import {
+  View, TextInput, Keyboard, Animated,
+} from 'react-native';
 import Config from '../../../config/Config';
 import styles from './Header.styles';
 import MainButton from '../MainButton';
@@ -13,36 +19,37 @@ export default class Header extends React.Component {
     };
   }
 
-  _searchPressed = () => {
+  searchPressed = () => {
     Animated.timing(
       this.state.searchLocation, {
         toValue: -Config.DEVICE_WIDTH,
         duration: 500,
         useNativeDriver: true,
-      }).start();
+      },
+    ).start();
   }
 
-  _resetSearch = () => {
+  resetSearch = () => {
     this.textInput.setNativeProps({ text: '', placeholder: 'eg. Trump' });
 
     // this.textInput.current.clear();
     this.setState({
-      searchLocation: new Animated.Value(0)
+      searchLocation: new Animated.Value(0),
     });
     Keyboard.dismiss();
   }
 
-  _changeSearchTerm = (text) => {
+  changeSearchTerm = (text) => {
     this.setState({ searchTerm: text });
   }
 
   render() {
     return (
-      <View style={ styles.bigContainer }>
+      <View style={styles.bigContainer}>
         <Animated.View style={[styles.container, { opacity: 0.9 }]}>
           <MainButton
             text="Top News"
-            onPress={() => { this.props.isTopNews ? this.props.topNews() : this.props.navigation.navigate('TopNews') }}
+            onPress={() => { this.props.isTopNews ? this.props.topNews() : this.props.navigation.navigate('TopNews'); }}
             buttonStyle={[styles.textButton, { width: 80, color: this.props.currentMenuOption === 'TopNews' ? '#007AFF' : '#111' }]}
           />
           <MainButton
@@ -52,46 +59,46 @@ export default class Header extends React.Component {
           />
           <MainButton
             text="Search"
-            onPress={() => this._searchPressed()}
+            onPress={() => this.searchPressed()}
             buttonStyle={[styles.textButton, { width: 70 }]}
           />
         </Animated.View>
 
-        <View style={ styles.countryBox }>
+        <View style={styles.countryBox}>
           <MainButton
             text="US"
             onPress={() => this.props.changeCountry('us')}
-            buttonStyle={ this.props.currentCountry === 'us' ? styles.countryButtonActive : styles.countryButton }
+            buttonStyle={this.props.currentCountry === 'us' ? styles.countryButtonActive : styles.countryButton}
           />
           <MainButton
             text="GB"
             onPress={() => this.props.changeCountry('gb')}
-            buttonStyle={ this.props.currentCountry === 'gb' ? styles.countryButtonActive : styles.countryButton }
+            buttonStyle={this.props.currentCountry === 'gb' ? styles.countryButtonActive : styles.countryButton}
           />
         </View>
 
         {/* eslint-disable-next-line max-len */}
-        <Animated.View style={ [styles.searchBox, { transform: [{translateX: this.state.searchLocation}] }] }>
+        <Animated.View style={[styles.searchBox, { transform: [{ translateX: this.state.searchLocation }] }]}>
           <TextInput
-            ref={(e) => {this.textInput = e}}
+            ref={(e) => { this.textInput = e; }}
             disabled
             underlineColorAndroid="transparent"
-            placeholder={'eg. Trump'}
+            placeholder="eg. Trump"
             placeholderTextColor="grey"
             withRef
-            onChangeText={(text) => this._changeSearchTerm(text)}
-            style={ styles.searchInput }
+            onChangeText={(text) => this.changeSearchTerm(text)}
+            style={styles.searchInput}
           />
-          <View style={ styles.countryBox }>
+          <View style={styles.countryBox}>
             <MainButton
               text="Search"
-              onPress={() => { this.props.searchTerm(this.state.searchTerm); this._resetSearch(); }}
+              onPress={() => { this.props.searchTerm(this.state.searchTerm); this.resetSearch(); }}
               buttonStyle={[styles.countryButtonActive, { width: 80 }]}
             />
             <MainButton
               text="Close"
-              onPress={() => this._resetSearch()}
-              buttonStyle={ [styles.countryButton, { width: 80 }] }
+              onPress={() => this.resetSearch()}
+              buttonStyle={[styles.countryButton, { width: 80 }]}
             />
           </View>
         </Animated.View>
