@@ -80,13 +80,14 @@ class TopNews extends React.Component {
 
       // console.log('categoryNews ' + category, response['response']);
 
-      let p = [];
+      const p = [];
       const { articles } = response.response; // categoryNews.response.articles;
       await Object.keys(articles).map((key) => {
         if (key < MAX_NEWS_FROM_CATEGORY) {
           // console.log('XXXX ' + key + category, articles[key]);
           p.push(articles[key]);
         }
+        return p;
       });
 
       top5FromCategory.push({ [category]: p });
@@ -184,7 +185,7 @@ class TopNews extends React.Component {
       this.setState({
         loaded: true,
         categoryNews: {},
-        errorMessage: categoryNews.response.message
+        errorMessage: categoryNews.response.message,
       });
       return false;
     }
@@ -200,42 +201,49 @@ class TopNews extends React.Component {
       <SafeAreaView style={ styles.container }>
         <StatusBar translucent={false} backgroundColor={'#111111'} barStyle={'dark-content'} />
         <Header
-          navigation={ this.props.navigation }
-          currentCountry={ this.state.currentCountry }
-          changeCountry={ this._changeCountry }
-          searchTerm={ this._searchTerm }
-          topNews={ this._resetTopNews }
-          showCategories={ this._showCategories }
-          isTopNews={ true }
-          currentMenuOption={ this.state.currentMenuOption }
+          navigation={this.props.navigation}
+          currentCountry={this.state.currentCountry}
+          changeCountry={this._changeCountry}
+          searchTerm={this._searchTerm}
+          topNews={this._resetTopNews}
+          showCategories={this._showCategories}
+          isTopNews
+          currentMenuOption={this.state.currentMenuOption}
         />
         {
-          this.state.errorMessage ? <View style={{ flex: 1, padding: 10 }}><Text>{ this.state.errorMessage }</Text></View> : (
+          this.state.errorMessage ? (
+            <View style={{ flex: 1, padding: 10 }}>
+              <Text>{this.state.errorMessage}</Text>
+            </View>
+          ) : (
             this.state.loaded ? (
               this.state.showCategories ?
                 <CategoriesComponent
-                  topNews={ this.state.top5FromCategory }
+                  topNews={this.state.top5FromCategory}
                   // refreshNews={this._getTopNews}
-                  navigation={ this.props.navigation }
-                  style={{ position: 'relative'}}
+                  navigation={this.props.navigation}
+                  style={{ position: 'relative' }}
                   newsCountPerCategory={MAX_NEWS_FROM_CATEGORY}
                   showOneCategory={this._showOneCategory}
-                /> : this.state.showCategory ?
-                  <TopNewsComponent
-                    topNews={this.state.categoryNews}
-                    refreshNews={this._getTopNews}
-                    navigation={this.props.navigation}
-                    style={{ position: 'relative'}}
-                    categoryName={this.state.currentCategory}
-                  />
-                  :
-                  <TopNewsComponent
-                    topNews={this.state.topNews}
-                    refreshNews={this._getTopNews}
-                    navigation={this.props.navigation}
-                    style={{ position: 'relative'}}
-                  />
-            ) : <Loader visible={true} />
+                /> : this.state.showCategory
+                  ? (
+                    <TopNewsComponent
+                      topNews={this.state.categoryNews}
+                      refreshNews={this._getTopNews}
+                      navigation={this.props.navigation}
+                      style={{ position: 'relative'}}
+                      categoryName={this.state.currentCategory}
+                    />
+                  )
+                  : (
+                    <TopNewsComponent
+                      topNews={this.state.topNews}
+                      refreshNews={this._getTopNews}
+                      navigation={this.props.navigation}
+                      style={{ position: 'relative'}}
+                    />
+                  )
+            ) : <Loader visible />
           )
         }
       </SafeAreaView>
@@ -252,19 +260,11 @@ const styles = StyleSheet.create({
   },
 });
 
-// export default TopNews;
-
-function mapStateToProps (state) {
-  // Log.debug('Apps mapStateToProps', {myProfile: state.myProfile, state: state});
-  // eslint-disable-next-line max-len
-  // userInfo: {user_id: state.myProfile.id, gender_string: state.myProfile.gender, email: state.myProfile.email, username: state.myProfile.username }
-
-  return {
-    // myProfileUsername: state.myProfile.username
-  };
+function mapStateToProps(state) {
+  return {};
 }
 
-function mapDispatchToProps (dispatch) {
+function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     getEndPointData,
   }, dispatch);
